@@ -5,7 +5,7 @@ const {
 } = require("../db/seeds/utils");
 
 describe("convertTimestampToDate", () => {
-  test("returns a new object", () => {
+  test.only("returns a new object", () => {
     const timestamp = 1557572706232;
     const input = { created_at: timestamp };
     const result = convertTimestampToDate(input);
