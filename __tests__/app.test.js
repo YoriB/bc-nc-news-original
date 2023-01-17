@@ -43,4 +43,31 @@ describe('app', () => {
               expect(topic).toHaveProperty('description')  
           })
         })
-      })         
+      })    
+      
+      describe('GET /api/articles', () => {
+        test('should return a status :200 ',() => {
+          return request(app)
+          .get('/api/articles')
+          .expect(200)
+          .then(({body}) => {
+            expect(true).toEqual(true);        
+          });
+        });
+      })
+
+  test('return a body containing an array of objects with following properties', () => {
+        return request(app)
+        .get('/api/articles')
+        .then(({body}) => {      
+      body.forEach(article => {
+          expect(article).toHaveProperty('author')
+          expect(article).toHaveProperty('title')  
+          expect(article).toHaveProperty('article_id') 
+          expect(article).toHaveProperty('topic') 
+          expect(article).toHaveProperty('created_at')  
+          expect(article).toHaveProperty('votes') 
+          expect(article).toHaveProperty('article_img_url')     
+      })
+    })
+  })  

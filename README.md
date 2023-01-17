@@ -21,7 +21,7 @@ title
 
 article_id
 
-topic
+article_id
 
 created_at
 
