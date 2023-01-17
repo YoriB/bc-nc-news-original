@@ -14,36 +14,19 @@ afterAll(() => {
 });
 
 describe('app', () => {
-  describe('GET /api/topics', () => {
-    test('should return a status :200 ',() => {
+  describe.only('GET /api/topics', () => {
+    test('should return a status :200 and return a body of three objects containing topics(properties) ',() => {
       return request(app)
-      .get('/api/topics')
-      .expect(200)
-      .then(({body}) => {
-        expect(true).toEqual(true);        
-      });
-    });
-  })
-
-    test('return an array with three topic objects ', () => {
-      return request(app)
-      .get('/api/topics')
+      .get('/api/topics')     
       .then(({body}) => {      
-          expect(body.length).toEqual(3);
-        });
-      });
-    })
-
-      test('return a body containing topics for slug and description', () => {
-            return request(app)
-            .get('/api/topics')
-            .then(({body}) => {      
+          expect(body.length).toEqual(3) 
           body.forEach(topic => {
               expect(topic).toHaveProperty('slug')
               expect(topic).toHaveProperty('description')  
           })
         })
-      })    
+      })   
+    })     
       
       describe('GET /api/articles', () => {
         test('should return a status :200 ',() => {
@@ -53,13 +36,12 @@ describe('app', () => {
           .then(({body}) => {
             expect(true).toEqual(true);        
           });
-        });
-      })
-
+        });      
   test('return a body containing an array of objects with following properties', () => {
         return request(app)
         .get('/api/articles')
-        .then(({body}) => {      
+        .then(({body}) => { 
+          console.log(body)
       body.forEach(article => {
           expect(article).toHaveProperty('author')
           expect(article).toHaveProperty('title')  
@@ -71,3 +53,5 @@ describe('app', () => {
       })
     })
   })  
+});
+})

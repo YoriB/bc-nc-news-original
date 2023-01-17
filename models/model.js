@@ -3,15 +3,15 @@ const { db } = require('../db/connection');
 const topics = require('../db/data/development-data/topics');
 
 const fetchTopics = () => {
-  return db.query(`SELECT * FROM topics` )
-    .then((result) => {  
-      return result.rows;
-    });
+  return db.query(`SELECT * FROM topics`).then((result) => {
+    return result.rows;
+  });
 };
 
+const fetchArticles = () => {
+  return db.query(`SELECT * FROM articles ORDER BY rating DESC`).then((result) => {
+    return result.rows;
+  });
+};
 
-
- 
-
-
-module.exports = {fetchTopics, fetchArticles};
+module.exports = { fetchTopics, fetchArticles };

@@ -2,8 +2,7 @@ const {fetchTopics, fetchArticles} = require('../models/model');
 
 const getTopics = (req, res, next) => {
   fetchTopics()
-    .then((result) => {
- 
+    .then((result) => { 
       res.status(200).send(result);
     })
     .catch(next);
@@ -11,12 +10,10 @@ const getTopics = (req, res, next) => {
 
 
 
-const getArticles = (req, res, next) => {
-  
-  const { sort_by, order, comment_count } = req.query
-  fetchArticles( sort_by, order, comment_count)
-  .then((result) => {
-      
+const getArticles = (req, res, next) => { 
+ 
+  fetchArticles()
+  .then((result) => {      
       res.status(200).send(result)
   })
   .catch(next)
