@@ -1,9 +1,8 @@
-const {fetchTopics, fetchArticles} = require('../models/model');
+const {fetchTopics, fetchArticles, fetchArticlesById, fetchCommentsByArticleId} = require('../models/model');
 
 const getTopics = (req, res, next) => {
   fetchTopics()
-    .then((result) => {
- 
+    .then((result) => { 
       res.status(200).send(result);
     })
     .catch(next);
@@ -11,16 +10,36 @@ const getTopics = (req, res, next) => {
 
 
 
-const getArticles = (req, res, next) => {
-  
-  const { sort_by, order, comment_count } = req.query
-  fetchArticles( sort_by, order, comment_count)
-  .then((result) => {
-      
-      res.status(200).send(result)
+const getArticles = (req, res, next) => { 
+ 
+  fetchArticles(req)
+  .then((results) => {   
+     
+      res.status(200).send(results)
   })
   .catch(next)
   
 }
+const getArticlesById = (req, res, next) => { 
+  const {article_id} = req.params;
 
-module.exports = { getTopics, getArticles };
+  
+  fetchArticlesById(article_id)
+  .then((result) => { 
+      res.status(200).send(result);
+    })
+  .catch((err)=>{
+next(err)
+  });
+};
+
+const getCommentsByArticleId = (req, res, next) => { 
+  const {article_id} = req.params;
+  
+  fetchCommentsByArticleId(article_id).then((result) => { 
+    res.status(200).send(result);
+  })
+  .catch(next)  
+}
+
+module.exports = { getTopics, getArticles, getArticlesById, getCommentsByArticleId };
