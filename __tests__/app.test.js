@@ -110,17 +110,71 @@ test('400 status response with an  invalid article ID', () => {
 
 
 
-describe('GET /api/comments/articleId/count', () => {
+describe('GET /api/comments/:article_id', () => {
+ 
   test('should return a status :200 and return a body containing an array of objects for the comments with a particular article Id', () => {
+    const article_id = 3;
     return request(app)
-    .get('/api/comments/2/count')
+    .get(`/api/comments/${article_id}`)
     .expect(200)
-    .then(({body}) => {
-      console.log(body)
-    })
+    .then(({body}) => { 
+     for (let i = 0; i < body.length; i++) {     
+     expect(body.length).toEqual(2);
+    }    
   })
 })
+
+test('returns an array of comments for the given article_id', () => {
+  const article_id = 1;
+  return request(app)
+  .get(`/api/comments/${article_id}`)
+  .then(({body}) => {
+    expect(body.length).toEqual(11);   
+    body.forEach((comment) => {
+      expect(comment).toHaveProperty('comment_id');
+      expect(comment).toHaveProperty('body');
+      expect(comment).toHaveProperty('author');
+      expect(comment).toHaveProperty('created_at');
+      expect(comment).toHaveProperty('article_id');
+      expect(comment).toHaveProperty('votes');   
+    });
+  })  
+})
+test('return a body of comments with the most recent first using created_at as the criteria', () => {
+  const article_id = 1;
+  return request(app)
+  .get(`/api/comments/${article_id}`)    
+    .then(({ body }) => {  
+       
+        expect(body).toBeSortedBy('created_at', {
+          descending: true,
+        });          
+    });
+});
+ 
+test('404 status response with a valid path but non existent article id', () => {
+  return request(app)
+  .get('/api/comments/55')
+  .expect(404)
+  .then(({body})=> {   
+    expect(body.msg).toEqual('Not found');
 })
 })
+
+  
+  test('400 status response with an  invalid article ID', () => {
+    return request(app)
+    .get('/api/comments/banaanaz')
+    .expect(400)
+    .then(({body})=> {     
+      expect(body.msg).toEqual('Bad request');
+    })   
+  })
+
+  
+  
+})
+  })
+  })
 })
 

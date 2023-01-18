@@ -16,7 +16,7 @@ app.get('/api/articles', getArticles);
 
 app.get('/api/articles/:article_id', getArticlesById);
 
-app.get('/api/comments/:articleId', getCommentsByArticleId);
+app.get('/api/comments/:article_id', getCommentsByArticleId);
 
 app.use((err, req, res, next) => {
   if (err.status && err.msg) {
@@ -27,7 +27,7 @@ app.use((err, req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
-console.log(err.code)
+
   if (err.code == "22P02") {
     res.status(400).send({ msg: 'Bad request' });
   } else {
