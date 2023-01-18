@@ -21,8 +21,6 @@ title
 
 article_id
 
-article_id
-
 created_at
 
 votes
@@ -32,3 +30,36 @@ article_img_url
 comment_count which is the total count of all the comments with this article_id - you should make use of queries to the database in order to achieve this.
 
 the articles should be sorted by date in descending order.
+
+5) Responds with:
+
+an article object, which should have the following properties:
+
+author
+title
+article_id
+body
+topic
+created_at
+votes
+article_img_url
+
+-Error handling here 
+
+6) an array of comments for the given article_id of which each comment should have the following properties:
+
+comment_id
+
+votes
+
+created_at
+
+author
+
+body
+
+article_id
+
+comments should be served with the most recent comments first
+
+-Error handling here 
