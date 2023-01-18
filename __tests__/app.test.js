@@ -110,16 +110,16 @@ test('400 status response with an  invalid article ID', () => {
 
 
 
-// describe('GET /api/comments/articleId/count', () => {
-//   test('should return a status :200 and return a body containing an array of objects for the comments with a particular article Id', () => {
-//     return request(app)
-//     .get('/api/comments/2/count')
-//     .expect(200)
-//     .then(({body}) => {
-//       console.log(body)
-//     })
-//   })
-// })
+describe('GET /api/comments/articleId/count', () => {
+  test('should return a status :200 and return a body containing an array of objects for the comments with a particular article Id', () => {
+    return request(app)
+    .get('/api/comments/2/count')
+    .expect(200)
+    .then(({body}) => {
+      console.log(body)
+    })
+  })
+})
 })
 })
 })
