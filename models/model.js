@@ -10,7 +10,7 @@ const fetchTopics = () => {
 };
 
 const fetchArticles = (req) => {
-  console.log('hhhhhhhhh');
+ 
   let queryString = `SELECT
    articles.article_id, 
    articles.title,
@@ -33,7 +33,7 @@ const fetchArticles = (req) => {
 
 const fetchArticlesById = (article_id) => {
   if (article_id > testData.articleData.length) {
-    return Promise.reject({ status: 400, msg: 'Bad request' });
+    return Promise.reject({ status: 404, msg: 'Article not found' });
   }
 
   return db
@@ -45,7 +45,7 @@ const fetchArticlesById = (article_id) => {
 };
 
 const fetchCommentsByArticleId = (article_id) => {
-  console.log('wwwwwwwwwwwwwwwwwwwwwwwwwwww');
+ 
   return db
     .query(`SELECT * FROM comments WHERE article_id = $1`, [article_id])
 

@@ -64,7 +64,8 @@ describe('app', () => {
       return request(app)
         .get('/api/articles/2')
         .expect(200)            
-        .then(({ body }) => {       
+        .then(({ body }) => {    
+         
           expect(body).toHaveProperty('author'), expect.any(String);
           expect(body).toHaveProperty('title'), expect.any(String);
           expect(body).toHaveProperty('article_id'), expect.any(Number);
@@ -80,43 +81,46 @@ describe('app', () => {
         .get('/api/articles/2')
         .expect(200)
         .then(({ body }) => {    
+         
          for (let i = 0; i < body.length; i++) { 
           expect(body[i].length).toEqual(1);  
          }
          })   
         })    
  
-test('400 responds with a valid but non existent path', () => {
+test('404 status response with a valid path but non existent article', () => {
   return request(app)
   .get('/api/articles/55')
+  .expect(404)
+  .then(({body})=> {
+   
+    expect(body.msg).toEqual('Article not found');
+})
+})
+test('400 status response with an  invalid article ID', () => {
+  return request(app)
+  .get('/api/articles/banaanaz')
   .expect(400)
   .then(({body})=> {
    
     expect(body.msg).toEqual('Bad request');
-})
+  })
+ 
 })
 
-// test('404 responds with an invalid path', () => {
-//   return request(app)
-//   .get('/not-a-valid-path')
-//   .expect(404)
-//   .then(({body})=> {
-//     expect(body.msg).toEqual('Path not found'); 
-   
+
+
+// describe('GET /api/comments/articleId/count', () => {
+//   test('should return a status :200 and return a body containing an array of objects for the comments with a particular article Id', () => {
+//     return request(app)
+//     .get('/api/comments/2/count')
+//     .expect(200)
+//     .then(({body}) => {
+//       console.log(body)
+//     })
 //   })
 // })
-  })
+})
+})
+})
 
-
-describe.only('GET /api/comments/articleId/count', () => {
-  test('should return a status :200 and return a body containing an array of objects for the comments with a particular article Id', () => {
-    return request(app)
-    .get('/api/comments/2/count')
-    .expect(200)
-    .then(({body}) => {
-      console.log(body)
-    })
-  })
-})
-})
-})
