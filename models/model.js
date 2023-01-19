@@ -78,6 +78,15 @@ const fetchCommentsByArticleId= (article_id) =>{
   })
 }
 
+const fetchVotedArticlesById = (article_id) => {
+  return db.query(`UPDATE articles SET votes = votes + $1 WHERE article_id = $1 RETURNING ;`, [article_id, votes])
+.then((result) => {
+ 
+  return result.rows[0];
+})
+}
+
+
 
 
 module.exports = {
@@ -85,5 +94,6 @@ module.exports = {
   fetchArticles,
   fetchArticlesById,
   fetchCommentsByArticleId,
-  fetchPostedCommentsByArticleId
+  fetchPostedCommentsByArticleId,
+  fetchVotedArticlesById
 };

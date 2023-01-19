@@ -231,8 +231,24 @@ test('should return a status of 400 for a missing username',() => {
 //   })
   })  
 })
+  
+
+  describe.only('PATCH  /api/articles/:article_id ', () => {
+    test('should return a status :200 when a valid comment is updated.', () => {
+      const newVote = 1
+      const articleVoted = {inc_votes : newVote}
+      return request(app)
+      .patch(" /api/articles/1")
+      .send(articleVoted)
+      .expect(200)
+      .then(({body}) => {
+        return body;
+        })
+})
   })
 })
+})
+
 
 
 
