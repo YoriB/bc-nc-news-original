@@ -64,8 +64,7 @@ const fetchCommentsByArticleId= (article_id) =>{
   }
     
 
-  const fetchPostedCommentsByArticleId = ({article_id, username, body}) => {    
- 
+  const fetchPostedCommentsByArticleId = (article_id, {username, body}) => {     
 
   if (!article_id ||!username ||!body) {
     return Promise.reject({ status: 400, msg: 'Incomplete comment' });

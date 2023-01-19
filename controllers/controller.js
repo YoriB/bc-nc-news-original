@@ -46,9 +46,11 @@ const postCommentsByArticleId = (req, res, next) => {
   
   const comment = req.body
 
+ const {article_id} = req.params;
+ 
  
 
-  fetchPostedCommentsByArticleId(comment).then((result) => {  
+  fetchPostedCommentsByArticleId(article_id, comment).then((result) => {  
   
     res.status(201).send(result);
   })
