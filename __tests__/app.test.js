@@ -19,6 +19,7 @@ describe('app', () => {
     test('should return a status :200 and return a body of three objects containing topics(properties) ', () => {
       return request(app)
         .get('/api/topics')
+        .expect(200)
         .then(({ body }) => {
           expect(body.length).toEqual(3);
           body.forEach((topic) => {
@@ -117,10 +118,8 @@ describe('GET /api/comments/:article_id', () => {
     return request(app)
     .get(`/api/comments/${article_id}`)
     .expect(200)
-    .then(({body}) => { 
-     for (let i = 0; i < body.length; i++) {     
-     expect(body.length).toEqual(2);
-    }    
+    .then(({body}) => {       
+     expect(body.length).toEqual(2);    
   })
 })
 
@@ -144,8 +143,7 @@ test('return a body of comments with the most recent first using created_at as t
   const article_id = 1;
   return request(app)
   .get(`/api/comments/${article_id}`)    
-    .then(({ body }) => {  
-       
+    .then(({ body }) => {         
         expect(body).toBeSortedBy('created_at', {
           descending: true,
         });          
@@ -170,11 +168,71 @@ test('404 status response with a valid path but non existent article id', () => 
       expect(body.msg).toEqual('Bad request');
     })   
   })
+  }) 
+  
 
-  
-  
+  describe('POST /api/articles/:article_id/comments', () => {
+    test('should return a status :201 when a valid comment is posted and checks its length',() => {     
+   
+  const newComment = {article_id : 1, username: 'icellusedkars',body: "test"}
+      return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(201)
+      .then(({body}) => {      
+        for (let i = 0; i < body.length; i++) {           
+        expect(body.length).toEqual(1);  
+        }     
+  })
+})
+test('should return a body containing the username, body and article_id when a valid comment is posted',() => {
+  const newComment = {article_id : 1, username: 'icellusedkars',body: "test"}
+  return request(app)
+  .post("/api/articles/1/comments")
+  .send(newComment)  
+  .then(({body}) => { 
+    for (let i = 0; i < body.length; i++) { 
+   expect(body[i]).toEqual({...newComment_}); 
+    } 
+  }) 
+})
+test('should return a status of 400 for a missing username',() => {
+  const newComment = {article_id : 1, username: 'icellusedkars'}  
+  return request(app)
+  .post("/api/articles/1/comments")
+  .send(newComment)
+  .expect(400)
+  .then(({body})=> {
+    expect(body.msg).toEqual('Incomplete comment');
+})
+}) 
+
+  test('should return a status of 400 for a missing key value',() => {
+    const newComment = {article_id : 1, username: 'icellusedkars'}  
+    return request(app)
+    .post("/api/articles/1/comments")
+    .send(newComment)
+    .expect(400)
+    .then(({body})=> {
+      expect(body.msg).toEqual('Incomplete comment');
+    })
+  })   
+
+// test('404 status response with a non existent article id', () => {
+//   const newComment = { article_id : 'cheese', username: 'icellusedkars', body : 'test'}    
+//     return request(app)
+//     .post('/api/articles/cheese/comments')
+//     .send(newComment)
+//     .expect(404)
+//     .then(({body})=> {  
+//   expect(body.msg).toEqual('Not found');
+//     })
+//   })
+  })  
 })
   })
-  })
 })
+
+
+
 

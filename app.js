@@ -5,6 +5,7 @@ const {
   getArticles,
   getArticlesById,
   getCommentsByArticleId,
+  postCommentsByArticleId
 } = require('./controllers/controller');
 const app = express();
 
@@ -18,8 +19,12 @@ app.get('/api/articles/:article_id', getArticlesById);
 
 app.get('/api/comments/:article_id', getCommentsByArticleId);
 
+app.post('/api/articles/:article_id/comments', postCommentsByArticleId);
+
 app.use((err, req, res, next) => {
+ 
   if (err.status && err.msg) {
+   
     res.status(err.status).send({ msg: err.msg });
   } else {
     next(err);
