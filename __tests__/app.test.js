@@ -143,7 +143,8 @@ test('return a body of comments with the most recent first using created_at as t
   const article_id = 1;
   return request(app)
   .get(`/api/comments/${article_id}`)    
-    .then(({ body }) => {         
+    .then(({ body }) => {  
+       
         expect(body).toBeSortedBy('created_at', {
           descending: true,
         });          

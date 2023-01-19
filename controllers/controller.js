@@ -45,6 +45,7 @@ const getCommentsByArticleId = (req, res, next) => {
 const postCommentsByArticleId = (req, res, next) => {  
   
   const comment = req.body
+
  
 
   fetchPostedCommentsByArticleId(comment).then((result) => {  
