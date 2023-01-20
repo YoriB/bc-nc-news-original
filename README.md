@@ -92,3 +92,14 @@ Responds with:
 the updated article
 
 Error handling here
+
+
+9)
+Responds with:
+
+an array of objects, each object should have the following property:
+username
+name
+avatar_url
+
+Error handling here
