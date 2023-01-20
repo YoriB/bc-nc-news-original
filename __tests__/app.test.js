@@ -29,6 +29,7 @@ describe('app', () => {
         });
     });
   });
+})
 
   describe('GET /api/articles', () => {
     test('should return a status :200 and return a body containing an array of objects tested to show all its properties', () => {
@@ -49,6 +50,7 @@ describe('app', () => {
           });
         });
     });
+  })
     test('return a body ordered in a descending order with created_at as the criteria', () => {
       return request(app)
         .get('/api/articles')
@@ -59,6 +61,7 @@ describe('app', () => {
             });          
         });
     });
+  
   
   describe('GET /api/articles/:article_id', () => {
     test('should return a status :200 and responds with an articles object with required keys', () => {
@@ -87,7 +90,8 @@ describe('app', () => {
           expect(body[i].length).toEqual(1);  
          }
          })   
-        })    
+        }) 
+      })   
  
 test('404 status response with a valid path but non existent article', () => {
   return request(app)
@@ -175,7 +179,7 @@ test('404 status response with a valid path but non existent article id', () => 
   describe('POST /api/articles/:article_id/comments', () => {
     test('should return a status :201 when a valid comment is posted and checks its length',() => {     
    
-  const newComment = {article_id : 1, username: 'icellusedkars',body: "test"}
+  const newComment = {username: 'icellusedkars',body: "test"}
       return request(app)
       .post("/api/articles/1/comments")
       .send(newComment)
@@ -187,7 +191,7 @@ test('404 status response with a valid path but non existent article id', () => 
   })
 })
 test('should return a body containing the username, body and article_id when a valid comment is posted',() => {
-  const newComment = {article_id : 1, username: 'icellusedkars',body: "test"}
+  const newComment = {username: 'icellusedkars',body: "test"}
   return request(app)
   .post("/api/articles/1/comments")
   .send(newComment)  
@@ -197,8 +201,8 @@ test('should return a body containing the username, body and article_id when a v
     } 
   }) 
 })
-test('should return a status of 400 for a missing username',() => {
-  const newComment = {article_id : 1, username: 'icellusedkars'}  
+test('should return a status of 400 for a missing body',() => {
+  const newComment = { username: 'icellusedkars'}  
   return request(app)
   .post("/api/articles/1/comments")
   .send(newComment)
@@ -208,8 +212,8 @@ test('should return a status of 400 for a missing username',() => {
 })
 }) 
 
-  test('should return a status of 400 for a missing key value',() => {
-    const newComment = {article_id : 1, username: 'icellusedkars'}  
+  test('should return a status of 400 for a missing username',() => {
+    const newComment = {body : 'test'}  
     return request(app)
     .post("/api/articles/1/comments")
     .send(newComment)
@@ -219,35 +223,92 @@ test('should return a status of 400 for a missing username',() => {
     })
   })   
 
-// test('404 status response with a non existent article id', () => {
-//   const newComment = { article_id : 'cheese', username: 'icellusedkars', body : 'test'}    
-//     return request(app)
-//     .post('/api/articles/cheese/comments')
-//     .send(newComment)
-//     .expect(404)
-//     .then(({body})=> {  
-//   expect(body.msg).toEqual('Not found');
-//     })
-//   })
-  })  
+test('400 status response with a non existent article id', () => {
+  const newComment = { username: 'icellusedkars', body : 'test'}    
+    return request(app)
+    .post('/api/articles/cheese/comments')
+    .send(newComment)
+    .expect(400)
+    .then(({body})=> {  
+  expect(body.msg).toEqual('Bad request');
+    })
+  })
+  test('404 status response with a valid path but non existent article id', () => {
+    const newComment = { username: 'icellusedkars', body : 'test'}
+    return request(app)
+    .post('/api/articles/99786954/comments')
+    .send(newComment)
+    .expect(404)
+    .then(({body})=> {  
+      expect(body.msg).toEqual('Not found');
+  }) 
 })
-  
 
-//   describe.only('PATCH  /api/articles/:article_id ', () => {
-//     test('should return a status :200 when a valid comment is updated.', () => {
-//       const newVote = 1
-//       const articleVoted = {inc_votes : newVote}
-//       return request(app)
-//       .patch(" /api/articles/1")
-//       .send(articleVoted)
-//       .expect(200)
-//       .then(({body}) => {
-//         return body;
-//         })
-// })
-//   })
+describe('PATCH /api/articles/:article_id', () => { 
+  test('should return a status :200 and return a body with an updated increased number of votes', () => {
+    const newVote = 10;
+    const articleVoted = {inc_votes : newVote}         
+    return request(app)
+    .patch(`/api/articles/1`)
+    .send(articleVoted)
+    .expect(200)    
+    .then(({ body }) => {    
+      for (let i = 0; i < body.length; i++) {
+      expect(body[i].length).toEqual(1);      
+      expect(body[i].votes).toEqual(110);
+      }
+    });
+});
+test('should return a status :200 and return a body with an updated decreased number of votes', () => {
+  const newVote = -110;
+  const articleVoted = {inc_votes : newVote}         
+  return request(app)
+  .patch(`/api/articles/1`)
+  .send(articleVoted)
+  .expect(200)    
+  .then(({ body }) => {    
+    for (let i = 0; i < body.length; i++) {
+    expect(body[i].article_id).toEqual(1);      
+    expect(body[i].votes).toEqual(-10);
+    }
+  });
+});
+
+test("PATCH - returns a status 400 and an incorrect input message when the value of inc_votes is a format another than a number", () => {
+  const newVote = 'dog';
+  const articleVoted = {inc_votes : newVote}  
+  return request(app)
+    .patch("/api/articles/4")
+    .send(articleVoted)    
+    .expect(400)
+    .then(({ body }) => {
+      expect(body.msg).toEqual("Invalid article_id -- must be an integer");
+    });
+});
+
+
+test("PATCH - returns a status 200 and the updated article, even when there is more than one property on the request body", () => {
+  const newVote = 1;
+  const articleVoted = {inc_votes : newVote, name : 'Emad'}  
+  return request(app)
+    .patch("/api/articles/1")
+    .send(articleVoted)    
+    .expect(200)
+    .then(({ body }) => {
+      for (let i = 0; i < body.length; i++) {
+      expect(body[i]).toEqual(101);
+      }
+    });
+});
 })
 })
+        
+   
+
+
+ 
+
+
 
 
 

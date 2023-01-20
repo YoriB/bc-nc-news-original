@@ -42,10 +42,12 @@ const getCommentsByArticleId = (req, res, next) => {
   .catch(next)  
 }
 
-const postCommentsByArticleId = (req, res, next) => {    
-  const comment = req.body 
+const postCommentsByArticleId = (req, res, next) => {  
+  
+  const comment = req.body
+  const {article_id} = req.params; 
 
-  fetchPostedCommentsByArticleId(comment).then((result) => {  
+  fetchPostedCommentsByArticleId(article_id, comment).then((result) => {  
   
     res.status(201).send(result);
   })
@@ -54,13 +56,17 @@ const postCommentsByArticleId = (req, res, next) => {
 }
 
 const updateArticle = (req, res, next) => {
-  const {article_id} = req.params;
-  const votedArticle = req.body;
-  console.log(votedArticle)
-  console.log(article_id)
 
-  fetchVotedArticlesById(article_id)
-  .then((result) => {
+  
+  const votedArticle = req.body.inc_votes; 
+
+ 
+  const {article_id} = req.params;
+  
+
+
+  fetchVotedArticlesById(article_id, votedArticle)
+  .then((result) => { 
     res.status(200).send(result);
   })
   .catch(next)
