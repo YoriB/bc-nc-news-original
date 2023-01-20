@@ -32,16 +32,16 @@ const fetchArticles = (req) => {
 };
 
 const fetchArticlesById = (article_id) => {
-  if (article_id > testData.articleData.length) {
-    return Promise.reject({ status: 404, msg: 'Article not found' });
-  }
-
+  
   return db
     .query(`SELECT * 
     FROM articles 
     WHERE article_id = $1`, [article_id])
 
     .then((result) => {
+      if (result.rows.length === 0) {
+        return Promise.reject({ status: 404, msg: 'Not found' });
+      }
       return result.rows[0];
     });
 };
@@ -79,19 +79,27 @@ const fetchCommentsByArticleId= (article_id) =>{
 }
   }
 
-const fetchVotedArticlesById = (article_id, votes) => {
-if (typeof votes !== 'number') {
-    return Promise.reject({ status: 400, msg: 'Invalid article_id -- must be an integer' });
+const fetchVotedArticlesById = (article_id, votedArticle) => {
+if (typeof votedArticle !== 'number'|| votedArticle === undefined) {
+    return Promise.reject({ status: 400, msg: 'Bad request' });
   }   
+  
+ 
   return db.query(`UPDATE articles 
   SET votes = votes + $2 
   WHERE article_id = $1 RETURNING * ;`
-  , [article_id, votes])
+  , [article_id, votedArticle])
 .then((result) => { 
- 
+  
+  if (result.rows.length === 0) {
+   
+    return Promise.reject({ status: 404, msg: 'Not found' });
+  }
+  
   return result.rows[0]  
 
 })
+
 }
 
 
