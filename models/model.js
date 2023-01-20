@@ -84,8 +84,8 @@ if (typeof votes !== 'number') {
     return Promise.reject({ status: 400, msg: 'Invalid article_id -- must be an integer' });
   }   
   return db.query(`UPDATE articles 
-  SET votes = votes + $2 
-  WHERE article_id = $1 RETURNING * ;`
+  SET votes = votes + $1 
+  WHERE article_id = $2 RETURNING * ;`
   , [article_id, votes])
 .then((result) => { 
  
@@ -101,6 +101,13 @@ const fetchUsers = () => {
   })
 }
 
+const fetchArticlesQueries = () => {
+  return db.query().then((result) => {
+    console.log(result);
+    return result.rows;
+})
+}
+
 
 
 module.exports = {
@@ -110,5 +117,6 @@ module.exports = {
   fetchCommentsByArticleId,
   fetchPostedCommentsByArticleId,
   fetchVotedArticlesById,
-  fetchUsers
+  fetchUsers,
+  fetchArticlesQueries
 };

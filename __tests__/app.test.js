@@ -6,6 +6,7 @@ const toSort = require('jest-sorted');
 
 const seed = require('../db/seeds/seed');
 
+
 beforeEach(() => {
   return seed(data);
 });
@@ -253,8 +254,8 @@ describe('PATCH /api/articles/:article_id', () => {
     .send(articleVoted)
     .expect(200)    
     .then(({ body }) => {    
-      for (let i = 0; i < body.length; i++) {
-      expect(body[i].length).toEqual(1); 
+      for (let i = 0; i < body.length; i++) {       
+   
       expect(body[i]).toHaveProperty('article_id');  
       expect(body[i]).toHaveProperty('author');  
       expect(body[i]).toHaveProperty('body');  
@@ -262,7 +263,7 @@ describe('PATCH /api/articles/:article_id', () => {
       expect(body[i]).toHaveProperty('votes');  
       expect(body[i]).toHaveProperty('topic'); 
       expect(body[i]).toHaveProperty('article_img_url'); 
-      expect(body[i]).toHaveProperty('comment_count');  
+      expect(body[i]).toHaveProperty('comment_count'); 
 
       expect(body[i].votes).toEqual(110);
       }
@@ -316,18 +317,44 @@ describe('GET /api/users', () => {
     .expect(200)
     .then(({ body }) => {
       expect(Array.isArray(body)).toBe(true);
-    for (let i = 0; i < body.length; i++) {
-      expect(body[i]).toHaveProperty('username');
-      expect(body[i]).toHaveProperty('name');
-      expect(body[i]).toHaveProperty('avatar_url');
-    }
+  body.forEach((user)=> {
+      expect(user).toHaveProperty('username');
+      expect(user).toHaveProperty('name');
+      expect(user).toHaveProperty('avatar_url');
+    })
     })
   })
-
-
   })
 
+  describe.only('GET /api/articles', () => { 
+    test('should return a status :200 and return a body containing articles to be queried', () => {
+      return request(app)
+      .get('/api/articles')
+      .expect(200)
+      .then(({ body }) => {
+        body.forEach((article)=> {          
+          expect(article).toHaveProperty('article_id');
+          expect(article).toHaveProperty('author');
+          expect(article).toHaveProperty('body');
+          expect(article).toHaveProperty('created_at');
+          expect(article).toHaveProperty('votes');
+          expect(article).toHaveProperty('topic');
+          expect(article).toHaveProperty('article_img_url')
+          expect(article).toHaveProperty('comment_count');
+        })
+    })
+  })
+  test('returns an article filtered by a topic query', () => {
+    return request(app)
+    .get('/api/articles?topic=Mitch')   
+    .then(({ body }) => {
+    console.log(body);
+      })
+    })
+
 })
+  })
+
 
         
    

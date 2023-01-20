@@ -8,6 +8,7 @@ const {
   postCommentsByArticleId,
   updateArticle,
   getUsers,
+  getArticlesQueries
 } = require('./controllers/controller');
 const app = express();
 
@@ -26,6 +27,11 @@ app.post('/api/articles/:article_id/comments', postCommentsByArticleId);
 app.patch('/api/articles/:article_id', updateArticle);
 
 app.get('/api/users', getUsers);
+
+app.get('/api/articles', getArticlesQueries)
+
+
+
 
 app.use((err, req, res, next) => { 
 
