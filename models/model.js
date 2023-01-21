@@ -3,15 +3,28 @@ const format = require('pg-format');
 const topics = require('../db/data/development-data/topics');
 const testData = require('../db/data/test-data/index');
 
+
+
+
 const fetchTopics = () => {
   return db.query(`SELECT * FROM topics`).then((result) => {
     return result.rows;
   });
 };
 
-const fetchArticles = (req) => {
+const fetchArticles = (sort_by = 'created_at' , order = 'DESC', topic) => {
+  const queryValues = [];
+  const acceptedSortBy = ['article_id', 'article_img_url','created_at', 'title', 'topic', 'author', 'votes', 'body' ];
+  const acceptedOrders = ['ASC','DESC'];
+
+  if(!acceptedOrders.includes(order)){
+  return Promise.reject({status: 400, message: 'Bad request'})
+}
+if (!acceptedSortBy.includes(sort_by)) {
+  return Promise.reject({status: 400, message: 'Bad request'})
+}
  
-  let queryString = `SELECT
+  let queryStr = `SELECT
    articles.article_id, 
    articles.title,
     articles.topic, 
@@ -21,14 +34,20 @@ const fetchArticles = (req) => {
    articles.votes, 
   articles.article_img_url,  
   COUNT(comments.body) AS comment_count
-  FROM articles LEFT JOIN comments 
-  ON articles.article_id = comments.article_id
-  GROUP BY articles.article_id 
-  ORDER BY articles.created_at DESC;`;
+  FROM articles
+  LEFT JOIN comments 
+  ON articles.article_id = comments.article_id`
 
-  return db.query(queryString).then((results) => {
-    return results.rows;
-  });
+if (topic){
+  queryStr += ` WHERE topic = $1`
+  queryValues.push(topic)
+}
+queryStr += ` GROUP BY articles.article_id  ORDER BY ${sort_by} ${order}`
+
+  return db.query(queryStr, queryValues).then((results) => {
+  
+  return results.rows
+})  
 };
 
 const fetchArticlesById = (article_id) => {
@@ -79,21 +98,23 @@ const fetchCommentsByArticleId= (article_id) =>{
 }
   }
 
-const fetchVotedArticlesById = (article_id, votes) => {
-if (typeof votes !== 'number') {
-    return Promise.reject({ status: 400, msg: 'Invalid article_id -- must be an integer' });
+const fetchVotedArticlesById = (article_id, voteChange) => {
+if (typeof voteChange !== 'number' || voteChange === undefined) {
+    return Promise.reject({ status: 400, msg: 'Bad request' });
   }   
   return db.query(`UPDATE articles 
-  SET votes = votes + $1 
-  WHERE article_id = $2 RETURNING * ;`
-  , [article_id, votes])
-.then((result) => { 
- 
-  return result.rows[0]  
+  SET votes = votes + $2 
+  WHERE article_id = $1 RETURNING * ;`
+  , [article_id, voteChange])
 
-})
+  .then((result) => {
+if(result.rowCount === 0){
+  return Promise.reject({status: 404, msg: "Not found"});
+} 
+ return result.rows[0];    
+  })
 }
-
+  
 const fetchUsers = () => {
   return db.query(`SELECT * FROM users; `).then((result) => {
     
@@ -101,12 +122,6 @@ const fetchUsers = () => {
   })
 }
 
-const fetchArticlesQueries = () => {
-  return db.query().then((result) => {
-    console.log(result);
-    return result.rows;
-})
-}
 
 
 
@@ -118,5 +133,5 @@ module.exports = {
   fetchPostedCommentsByArticleId,
   fetchVotedArticlesById,
   fetchUsers,
-  fetchArticlesQueries
+  
 };

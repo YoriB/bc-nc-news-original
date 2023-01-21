@@ -1,25 +1,29 @@
-const {fetchTopics, fetchArticles, fetchArticlesById, fetchCommentsByArticleId, fetchPostedCommentsByArticleId, fetchVotedArticlesById, fetchUsers, fetchArticlesQueries} = require('../models/model');
+const {fetchTopics, fetchArticles, fetchArticlesById, fetchCommentsByArticleId, fetchPostedCommentsByArticleId, fetchVotedArticlesById, fetchUsers} = require('../models/model');
 
 const getTopics = (req, res, next) => {
   fetchTopics()
     .then((result) => { 
       res.status(200).send(result);
     })
-    .catch(next);
+    .catch(next)
 };
 
 
 
 const getArticles = (req, res, next) => { 
+  const {sort_by, order, topic} = req.query;
  
-  fetchArticles(req)
+
+  fetchArticles(sort_by, order, topic)
   .then((results) => {   
+  
      
       res.status(200).send(results)
   })
-  .catch(next)
-  
+  .catch(next)  
 }
+
+
 const getArticlesById = (req, res, next) => { 
   const {article_id} = req.params;
   
@@ -61,6 +65,7 @@ const updateArticle = (req, res, next) => {
 const {article_id} = req.params;
    fetchVotedArticlesById(article_id, voteChange)
   .then((result) => { 
+  
     res.status(200).send(result);
   })
   .catch(next)
@@ -72,17 +77,9 @@ const getUsers = (req, res, next) => {
   fetchUsers().then((result) => { 
   
     res.status(200).send(result);
-  }).catch(next);
+  }).catch(next)
 }
 
 
-const getArticlesQueries = (req, res, next) => {
- console.log(req)
-  
-  fetchArticlesQueries().then((result) => { 
-
-    res.status(200).send(result);
-  }).catch(next);
-}
  
-module.exports = { getTopics, getArticles, getArticlesById, getCommentsByArticleId , postCommentsByArticleId, updateArticle, getUsers, getArticlesQueries};
+module.exports = { getTopics, getArticles, getArticlesById, getCommentsByArticleId , postCommentsByArticleId, updateArticle, getUsers};
