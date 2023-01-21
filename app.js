@@ -5,8 +5,12 @@ const {
   getArticles,
   getArticlesById,
   getCommentsByArticleId,
-  postCommentsByArticleId
+  postCommentsByArticleId,
+  updateArticle,
+  getUsers,
+  getArticlesQueries
 } = require('./controllers/controller');
+
 const app = express();
 
 app.use(express.json());
@@ -21,18 +25,29 @@ app.get('/api/comments/:article_id', getCommentsByArticleId);
 
 app.post('/api/articles/:article_id/comments', postCommentsByArticleId);
 
-app.use((err, req, res, next) => {
- 
-  if (err.status && err.msg) {
+app.patch('/api/articles/:article_id', updateArticle);
 
-   
-    res.status(err.status).send({ msg: err.msg });
+app.get('/api/users', getUsers);
+
+
+
+
+
+
+app.use((err, req, res, next) => { 
+ 
+  if (err.status && err.msg) {   
+     
+
+   res.status(err.status).send({ msg: err.msg });
   } else {
     next(err);
   }
 });
 
 app.use((err, req, res, next) => {
+ 
+
 
   if (err.code == "22P02") {
     res.status(400).send({ msg: 'Bad request' });
@@ -47,7 +62,8 @@ app.use((err, req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
-  console.log(err)
+
+ 
   res.status(500).send({ msg: 'Internal Server Error' });
 });
 

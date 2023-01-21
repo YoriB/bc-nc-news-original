@@ -1,25 +1,29 @@
-const {fetchTopics, fetchArticles, fetchArticlesById, fetchCommentsByArticleId, fetchPostedCommentsByArticleId} = require('../models/model');
+const {fetchTopics, fetchArticles, fetchArticlesById, fetchCommentsByArticleId, fetchPostedCommentsByArticleId, fetchVotedArticlesById, fetchUsers} = require('../models/model');
 
 const getTopics = (req, res, next) => {
   fetchTopics()
     .then((result) => { 
       res.status(200).send(result);
     })
-    .catch(next);
+    .catch(next)
 };
 
 
 
 const getArticles = (req, res, next) => { 
- 
-  fetchArticles(req)
-  .then((results) => {   
+  const {sort_by, order, topic} = req.query;
+
+
+  fetchArticles(sort_by, order, topic)
+  .then((results) => {     
      
       res.status(200).send(results)
-  })
-  .catch(next)
   
+  })
+  .catch(next)  
 }
+
+
 const getArticlesById = (req, res, next) => { 
   const {article_id} = req.params;
   
@@ -45,10 +49,7 @@ const getCommentsByArticleId = (req, res, next) => {
 const postCommentsByArticleId = (req, res, next) => {  
   
   const comment = req.body
-
- const {article_id} = req.params;
- 
- 
+  const {article_id} = req.params; 
 
   fetchPostedCommentsByArticleId(article_id, comment).then((result) => {  
   
@@ -58,8 +59,27 @@ const postCommentsByArticleId = (req, res, next) => {
   .catch(next)  
 }
 
+const updateArticle = (req, res, next) => {
+  
+  const voteChange = req.body.inc_votes; 
+const {article_id} = req.params;
+   fetchVotedArticlesById(article_id, voteChange)
+  .then((result) => { 
+  
+    res.status(200).send(result);
+  })
+  .catch(next)
+}
+ 
+
+const getUsers = (req, res, next) => {
+  
+  fetchUsers().then((result) => { 
+  
+    res.status(200).send(result);
+  }).catch(next)
+}
+
 
  
-  
- 
-module.exports = { getTopics, getArticles, getArticlesById, getCommentsByArticleId , postCommentsByArticleId};
+module.exports = { getTopics, getArticles, getArticlesById, getCommentsByArticleId , postCommentsByArticleId, updateArticle, getUsers};
