@@ -59,23 +59,72 @@ const fetchArticles = (sort_by = 'created_at', order = 'DESC', topic) => {
   });
 };
 
-const fetchArticlesById = (article_id) => {
-  if (article_id > testData.articleData.length) {
-    return Promise.reject({ status: 404, msg: 'Article not found' });
-  }
+const fetchArticlesById = (article_ID, sort_by = 'created_at', order = 'DESC', article_id) => { 
 
-  return db
-    .query(
-      `SELECT * 
-    FROM articles 
-    WHERE article_id = $1`,
-      [article_id]
-    )
+if (article_ID > testData.articleData.length) {
+  return Promise.reject({ status: 404, msg: 'Not found' });
+} 
 
-    .then((result) => {
-      return result.rows[0];
-    });
-};
+else {
+  const queryValues = [];
+  const acceptedSortBy = [
+    'article_id',
+    'article_img_url',
+    'created_at',
+    'title',
+    'topic',
+    'author',
+    'votes',
+    'body',
+    'comment_count'
+  ];
+  const acceptedOrders = ['ASC', 'DESC'];
+  
+  order = order.toUpperCase() 
+
+   if (!acceptedSortBy.includes(sort_by) ||!acceptedOrders.includes(order) ||(/([a-z])/gim).test(article_ID) ) {
+    return Promise.reject({ status: 400, msg: 'Bad request' });
+   }  
+  
+
+  let queryStr = `SELECT
+   articles.article_id, 
+   articles.title,
+    articles.topic, 
+  articles.author, 
+  articles.body, 
+  articles.created_at,
+   articles.votes, 
+  articles.article_img_url,  
+  COUNT(comments.body) AS comment_count
+  FROM articles
+  LEFT JOIN comments 
+  ON articles.article_id = comments.article_id`;
+
+     if (article_id) {
+    queryStr += ` WHERE article_id = $1`;;
+    
+    queryValues.push(article_id);    
+     }
+
+  queryStr += ` GROUP BY articles.article_id  ORDER BY ${sort_by} ${order};`
+
+  return db.query(queryStr, queryValues).then((results) => {    
+   return results.rows;
+    
+
+  });
+}
+}
+
+ 
+
+
+
+
+  
+    
+
 
 const fetchCommentsByArticleId = (article_id) => {
   return db

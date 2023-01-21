@@ -108,3 +108,10 @@ sort_by, which sorts the articles by any valid column (defaults to date)
 order, which can be set to asc or desc for ascending or descending (defaults to descending)
 
 error handling here
+
+11)
+An article response object should also now include:
+
+-comment_count which is the total count of all the comments with this article_id - you should make use of queries to the database in order to achieve this.
+
+error handling here
