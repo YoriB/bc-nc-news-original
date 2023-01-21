@@ -35,7 +35,7 @@ app.get('/api/users', getUsers);
 
 
 app.use((err, req, res, next) => { 
-
+ 
   if (err.status && err.msg) {   
      
 
@@ -62,6 +62,7 @@ app.use((err, req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
+
  
   res.status(500).send({ msg: 'Internal Server Error' });
 });

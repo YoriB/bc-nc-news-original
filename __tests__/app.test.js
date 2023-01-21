@@ -354,17 +354,59 @@ describe('GET /api/users', () => {
   describe('GET /api/articles', () => {
     test('should return a status :200 and return a body containing articles to be queried', () => {
       return request(app)
-      .get('/api/articles?topic=Mitch')
+      .get('/api/articles?topic=mitch')
       .expect(200)  
     .then(({ body }) => {
+    
     body.forEach((article)=> {
    expect(article.topic).toEqual('mitch');
       })
     })
   })
+ test('should return a status 404 for a bad topic query', () => {
+  return request(app)
+  .get('/api/articles?topic=orangeee')
+  .expect(404)
+  .then(({ body }) => {
+   
+    expect(body.msg).toEqual('Not found');
+ })
+  })
+  test('Accepts a query to change sort by', () => {
+    return request(app)
+    .get('/api/articles?sort_by=created_at')
+    .expect(200)
+    .then(({ body }) => {
+      expect(body).toBeSortedBy('created_at', {
+        descending: true,
+      });
+})
+})
+test('Returns status 400 for bad sort by request', () => {
+  return request(app)
+  .get('/api/articles?sort_by=bananazzz')
+  .expect(400)
+  .then(({body}) => {
+      expect(body.msg).toEqual('Bad request')
   })
 })
+test('Accepts an order query to change sort order', () => {
+  return request(app)
+  .get('/api/articles?order=desc')
+  .expect(200)
+  .then(({body}) => {
+    console.log(body)
+    for(let i = 1; i < body.length; i++) {
+        let isLessThan = false;
+    if (body[i].created_at <= body[i - 1].created_at) isLessThan = true
+        expect(isLessThan).toEqual(true)
+    }
 })
+})
+})
+})
+})
+
 
 
 

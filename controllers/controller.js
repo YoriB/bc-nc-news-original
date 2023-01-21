@@ -12,13 +12,13 @@ const getTopics = (req, res, next) => {
 
 const getArticles = (req, res, next) => { 
   const {sort_by, order, topic} = req.query;
- 
+
 
   fetchArticles(sort_by, order, topic)
-  .then((results) => {   
-  
+  .then((results) => {     
      
       res.status(200).send(results)
+  
   })
   .catch(next)  
 }
