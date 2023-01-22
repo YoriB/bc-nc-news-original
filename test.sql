@@ -1,5 +1,7 @@
 \c nc_news_test
 
-SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC;
 
-
+DELETE FROM comments USING articles
+WHERE comments.comment_id = 1
+AND articles.article_id =  comments.article_id 
+RETURNING*; 
