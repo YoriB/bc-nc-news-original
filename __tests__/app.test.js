@@ -29,6 +29,7 @@ describe('app', () => {
         });
     });
   });
+})
 
   describe('GET /api/articles', () => {
     test('should return a status :200 and return a body containing an array of objects tested to show all its properties', () => {
@@ -49,7 +50,6 @@ describe('app', () => {
           });
         });
     });
-
     test('return a body ordered in a descending order with created_at as the criteria', () => {
       return request(app)
         .get('/api/articles')
@@ -249,6 +249,7 @@ test('400 status response with a non existent article id', () => {
   expect(body.msg).toEqual('Bad request');
     })
   })
+
   test('404 status response with a valid path but non existent article id', () => {
     const newComment = { username: 'icellusedkars', body : 'test'}
     return request(app)
@@ -373,8 +374,106 @@ describe('GET /api/users', () => {
 })
   
 
+describe.only('PATCH /api/articles/:article_id', () => { 
+  test('should return a status :200 and return a body with an updated increased number of votes', () => {
+    const newVote = 10;
+    const articleVotes = {inc_votes : newVote}         
+    return request(app)
+    .patch(`/api/articles/1`)
+    .send(articleVotes)
+    .expect(200)    
+    .then(({ body }) => {  
+    expect(body).toEqual({
+        article_id: 1,
+        title: 'Living in the shadow of a great man',
+        topic: 'mitch',
+        author: 'butter_bridge',
+        body: 'I find this existence challenging',
+        created_at: '2020-07-09T20:11:00.000Z',
+        votes: 110,
+        article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'
+      });   
+    });
+  })
 
-  describe('GET /api/articles', () => {
+
+test('should return a status :200 and return a body with an updated decreased number of votes', () => {
+  const newVote = -110;
+  const articleVotes = {inc_votes : newVote}         
+  return request(app)
+  .patch(`/api/articles/1`)
+  .send(articleVotes)
+  .expect(200)    
+  .then(({ body }) => {    
+   expect(body).toEqual({
+    article_id: 1,
+    title: 'Living in the shadow of a great man',
+    topic: 'mitch',
+    author: 'butter_bridge',
+    body: 'I find this existence challenging',
+    created_at: '2020-07-09T20:11:00.000Z',
+    votes: -10,
+    article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'
+  })
+})
+})  
+
+
+test("PATCH - returns a status 400 and a bad request message when missing the inc_votes key", () => {
+  const newVote = 12 ;
+  const articleVotes = { crisps : newVote}  
+  return request(app)
+    .patch("/api/articles/4")
+    .send(articleVotes)    
+    .expect(400)
+    .then(({ body }) => {
+      expect(body.msg).toEqual("Bad request");
+    });
+});
+
+
+test("PATCH - returns a status 400 and an incorrect input message when the value of inc_votes is a format another than a number", () => {
+  const newVote = 'dog';
+  const articleVotes = {inc_votes : newVote}  
+  return request(app)
+    .patch("/api/articles/4")
+    .send(articleVotes)    
+    .expect(400)
+    .then(({ body }) => {
+      expect(body.msg).toEqual("Bad request");
+    });
+});
+  
+
+test("PATCH - returns a status 404 and for an article that does not exist", () => {
+  const newVote = 1;
+  const articleVotes = {inc_votes : newVote}  
+  return request(app)
+    .patch("/api/articles/467")
+    .send(articleVotes)    
+    .expect(404)
+    .then(({ body }) => {
+      console.log(body)
+      
+      expect(body.msg).toEqual("Not found");
+    });
+});
+
+
+test("PATCH - returns a status 200 and the updated article, even when there is more than one property on the request body", () => {
+  const newVote = 1;
+  const articleVotes = {inc_votes : newVote, name : 'Emad'}  
+  return request(app)
+    .patch("/api/articles/1")
+    .send(articleVotes)    
+    .expect(200)
+    .then(({ body }) => {     
+      expect(body.votes).toEqual(101);
+      })
+    });
+  })
+})   
+    describe('GET /api/articles', () => {
     test('should return a status :200 and return a body containing articles to be queried', () => {
       return request(app)
       .get('/api/articles?topic=mitch')
@@ -476,5 +575,4 @@ test("DELETE - responds with a 400 status code when the passed ID is in the wron
     });
 });
 });
-})
-})
+

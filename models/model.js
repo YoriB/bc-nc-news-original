@@ -110,15 +110,13 @@ else {
   queryStr += ` GROUP BY articles.article_id  ORDER BY ${sort_by} ${order};`
 
   return db.query(queryStr, queryValues).then((results) => {    
-   return results.rows;
-    
-
-    });
+   return results.rows;  
+  }); 
 }
 }  
 
   
-const fetchCommentsByArticleId = ()=> {
+const fetchCommentsByArticleId = ({article_id}) => {
   return db
     .query(
       'SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC;',
@@ -177,16 +175,12 @@ const fetchUsers = () => {
 const deleteCommentById = (comment_id) => {
   if (comment_id > testData.articleData.length) {
     return Promise.reject({ status: 404, msg: 'Not found' });
-}
-
-
-  return db.query(`DELETE FROM comments USING articles
+  }  
+return db.query(`DELETE FROM comments USING articles
   WHERE comments.comment_id = $1
   AND articles.article_id = comments.article_id ; 
   `,[comment_id])
-  .then((result) =>  {
-    
-    
+  .then((result) =>  {     
     return result.rows
   })
 };
