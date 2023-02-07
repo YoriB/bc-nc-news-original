@@ -26,6 +26,7 @@ const getArticles = (req, res, next) => {
 
 const getArticlesById = (req, res, next) => { 
 
+ 
   const {sort_by, order, article_id} = req.query;
 
  const article_ID= req.params.article_id;
@@ -87,7 +88,7 @@ const getUsers = (req, res, next) => {
 
 const deleteComment = (req, res, next) => {
   const comment_id = req.params.comment_id;
-  console.log(req)
+
 
   deleteCommentById(comment_id).then((result) => {
     res.status(204).send(result);

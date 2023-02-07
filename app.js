@@ -1,5 +1,8 @@
-const cors = require('cors')
-const express = require('express');
+const express = require("express")
+const app = express();
+const cors = require('cors');
+
+app.use(cors());
 
 
 const {
@@ -7,12 +10,15 @@ const {
   getArticles,
   getArticlesById,
   getCommentsByArticleId,
-  postCommentsByArticleId
+  postCommentsByArticleId,
+  updateArticle,
+  getUsers,
+  deleteComment
 } = require('./controllers/controller');
 
-const app = express();
 
-app.use(cors());
+
+
 
 app.use(express.json());
 
@@ -25,6 +31,17 @@ app.get('/api/articles/:article_id', getArticlesById);
 app.get('/api/comments/:article_id', getCommentsByArticleId);
 
 app.post('/api/articles/:article_id/comments', postCommentsByArticleId);
+
+app.patch('/api/articles/:article_id', updateArticle);
+
+app.get('/api/users', getUsers);
+
+app.delete('/api/comments/:comment_id', deleteComment);
+
+
+
+
+
 
 app.use((err, req, res, next) => {
  
@@ -39,6 +56,8 @@ app.use((err, req, res, next) => {
 
 app.use((err, req, res, next) => {
 
+
+
   if (err.code == "22P02") {
     res.status(400).send({ msg: 'Bad request' });
   
@@ -52,7 +71,8 @@ app.use((err, req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
-  console.log(err)
+
+ 
   res.status(500).send({ msg: 'Internal Server Error' });
 });
 
