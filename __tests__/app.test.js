@@ -75,6 +75,7 @@ describe('app', () => {
           expect(body).toHaveProperty('created_at'), expect.any(String);
           expect(body).toHaveProperty('votes'), expect.any(Number);
           expect(body).toHaveProperty('article_img_url'), expect.any(String);
+          
           });        
           })      
       test('should return an object with a length of 1', () => {
