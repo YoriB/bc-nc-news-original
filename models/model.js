@@ -19,7 +19,7 @@ const fetchArticles = (sort_by = 'created_at', order = 'DESC', topic) => {
     'topic',
     'author',
     'votes',
-    'body',
+    'body'
   ];
   const acceptedOrders = ['ASC', 'DESC'];
   order = order.toUpperCase()
