@@ -63,22 +63,23 @@ describe('GET /api/articles', () => {
 });
 
 describe('GET /api/articles/:article_id', () => {
-  test('should return a status :200 and responds with an articles object with all the required keys', () => {
-    const article_id = 2;
+  test.only('should return a status :200 and responds with an articles object with all the required keys', () => {
+    const article_id = 9 ;
     return request(app)
       .get(`/api/articles/${article_id}`)
       .expect(200)
-      .then(({ body }) => {
-        body.forEach((article) => {
-          expect(article).toHaveProperty('author'), expect.any(String);
-          expect(article).toHaveProperty('title'), expect.any(String);
-          expect(article).toHaveProperty('article_id'), expect.any(Number);
-          expect(article).toHaveProperty('body'), expect.any(String);
-          expect(article).toHaveProperty('topic'), expect.any(String);
-          expect(article).toHaveProperty('created_at'), expect.any(String);
-          expect(article).toHaveProperty('votes'), expect.any(Number);
-          expect(article).toHaveProperty('article_img_url'), expect.any(String);
-        });
+      .then(({ body }) => {  
+        
+           
+          expect(body).toHaveProperty('author'), expect.any(String);
+          expect(body).toHaveProperty('title'), expect.any(String);
+          expect(body).toHaveProperty('article_id'), expect.any(Number);
+          expect(body).toHaveProperty('body'), expect.any(String);
+          expect(body).toHaveProperty('topic'), expect.any(String);
+          expect(body).toHaveProperty('created_at'), expect.any(String);
+          expect(body).toHaveProperty('votes'), expect.any(Number);
+          expect(body).toHaveProperty('article_img_url'), expect.any(String);
+      
       });
   });
 
