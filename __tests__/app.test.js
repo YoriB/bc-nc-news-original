@@ -136,7 +136,7 @@ describe('GET /api/comments/:article_id', () => {
   test('should return a status :200 and return a body containing an array of objects for the comments with a particular article Id', () => {
     const article_id = 3;
     return request(app)
-    .get(`/api/comments/${article_id}`)
+    .get(`/api/articles${article_id}/comments`)
     .expect(200)
     .then(({body}) => {
      expect(body.length).toEqual(2);
