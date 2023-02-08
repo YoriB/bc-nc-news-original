@@ -452,9 +452,7 @@ test("PATCH - returns a status 404 and for an article that does not exist", () =
     .patch("/api/articles/467")
     .send(articleVotes)    
     .expect(404)
-    .then(({ body }) => {
-      console.log(body)
-      
+    .then(({ body }) => {     
       expect(body.msg).toEqual("Not found");
     });
 });
