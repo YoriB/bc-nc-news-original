@@ -136,9 +136,7 @@ const fetchUsers = () => {
 };
 
 const deleteCommentById = (comment_id) => {
-  if (!comment_id) {
-    return Promise.reject({ status: 404, msg: 'Not found' });
-  }
+
   return db
     .query(`DELETE FROM comments WHERE comment_id = $1 `, [comment_id])
     .then((result) => {
