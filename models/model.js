@@ -1,7 +1,7 @@
-const { db } = require('../db/connection');
-const format = require('pg-format');
-const topics = require('../db/data/development-data/topics');
-const testData = require('../db/data/test-data/index');
+const { db } = require("../db/connection");
+const format = require("pg-format");
+const topics = require("../db/data/development-data/topics");
+const testData = require("../db/data/test-data/index");
 
 const fetchTopics = () => {
   return db.query(`SELECT * FROM topics`).then((result) => {
@@ -9,17 +9,17 @@ const fetchTopics = () => {
   });
 };
 
-const fetchArticles = (sort_by = 'created_at', order = 'DESC', topic) => {
+const fetchArticles = (sort_by = "created_at", order = "DESC", topic) => {
   const queryValues = [];
   const acceptedSortBy = [
-    'article_id',
-    'article_img_url',
-    'created_at',
-    'title',
-    'topic',
-    'author',
-    'votes',
-    'body',
+    "article_id",
+    "article_img_url",
+    "created_at",
+    "title",
+    "topic",
+    "author",
+    "votes",
+    "body",
   ];
   const acceptedOrders = ['ASC', 'DESC'];
   order = order.toUpperCase();
@@ -81,12 +81,12 @@ const fetchArticlesById = (article_id) => {
 const fetchCommentsByArticleId = (article_id) => {
   return db
     .query(
-      'SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC;',
+      "SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC;",
       [article_id]
     )
     .then((result) => {
       if (result.rows.length === 0) {
-        return Promise.reject({ status: 404, msg: 'Not found' });
+        return Promise.reject({ status: 404, msg: "Not found" });
       } else {
         return result.rows;
       }
@@ -95,7 +95,7 @@ const fetchCommentsByArticleId = (article_id) => {
 
 const fetchPostedCommentsByArticleId = (article_id, { username, body }) => {
   if (!article_id || !username || !body) {
-    return Promise.reject({ status: 400, msg: 'Incomplete comment' });
+    return Promise.reject({ status: 400, msg: "Incomplete comment" });
   } else {
     return db
       .query(
@@ -122,7 +122,7 @@ const fetchVotedArticlesById = (article_id, voteChange) => {
 
     .then((result) => {
       if (result.rowCount === 0) {
-        return Promise.reject({ status: 404, msg: 'Not found' });
+        return Promise.reject({ status: 404, msg: "Not found" });
       }
 
       return result.rows[0];
