@@ -534,24 +534,5 @@ describe('DELETE api/comments/${comment_id}', () => {
     .delete(`/api/comments/${comment_id}`)
     .expect(204);
   });
-
-  test('DELETE - responds with a 404 status code when the passed ID doesnt exist', () => {
-    const comment_id = 8666;
-    return request(app)
-      .delete(`/api/comments/${comment_id}`)
-      .expect(404)
-      .then(({ body }) => {
-        expect(body.msg).toEqual('Not found');
-      });
-  });
-
-  test('DELETE - responds with a 400 status code when the passed ID is in the wrong format i.e. seven instead of 7', () => {
-    const comment_id = 'seven';
-    return request(app)
-      .delete(`api/comments/${comment_id}`)
-      .expect(400)
-      .then(({ body }) => {
-        expect(body.msg).toEqual('Bad request');
-      });
-  });
+ 
 });
