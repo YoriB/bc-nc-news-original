@@ -3,6 +3,7 @@ const {fetchTopics, fetchArticles, fetchArticlesById, fetchCommentsByArticleId, 
 const getTopics = (req, res, next) => {
   fetchTopics()
     .then((result) => { 
+     
       res.status(200).send(result);
     })
     .catch(next)
@@ -53,6 +54,7 @@ const postCommentsByArticleId = (req, res, next) => {
   const comment = req.body
  const {article_id} = req.params;
 
+
   fetchPostedCommentsByArticleId(article_id, comment).then((result) => {  
   
     res.status(201).send(result);
@@ -64,9 +66,10 @@ const postCommentsByArticleId = (req, res, next) => {
 const updateArticle = (req, res, next) => {
 
   const voteChange = req.body.inc_votes; 
-const {article_id} = req.params;
+
    fetchVotedArticlesById(article_id, voteChange)
   .then((result) => { 
+    console.log(result);
  
     res.status(200).send(result);
   })
@@ -84,9 +87,8 @@ const getUsers = (req, res, next) => {
 
 const deleteComment = (req, res, next) => {
   const comment_id = req.params.comment_id;
-
-
-  deleteCommentById(comment_id).then((result) => {
+  
+deleteCommentById(comment_id).then((result) => {    
     res.status(204).send(result);
   }).catch(next)
 }

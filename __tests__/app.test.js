@@ -15,7 +15,7 @@ afterAll(() => {
 });
 
 describe('app', () => {
-  describe('GET /api/topics', () => {
+  describe.only('GET /api/topics', () => {
     test('should return a status :200 and return a body of three objects containing topics(properties) ', () => {
       return request(app)
         .get('/api/topics')
@@ -32,14 +32,14 @@ describe('app', () => {
 });
 
 describe('GET /api/articles', () => {
-  test('should return a status :200 and return a body containing an array of objects tested to show all its properties', () => {
+  test.only('should return a status :200 and return a body containing an array of objects tested to show all its properties', () => {
     return request(app)
       .get('/api/articles')
       .expect(200)
       .then(({ body }) => {
         expect(body.length).toEqual(12);
         body.forEach((article) => {
-          console.log(article);
+        
           expect(article).toHaveProperty('author');
           expect(article).toHaveProperty('title');
           expect(article).toHaveProperty('article_id');
@@ -63,7 +63,7 @@ describe('GET /api/articles', () => {
 });
 
 describe('GET /api/articles/:article_id', () => {
-  test.only('should return a status :200 and responds with an articles object with all the required keys', () => {
+  test('should return a status :200 and responds with an articles object with all the required keys', () => {
     const article_id = 9 ;
     return request(app)
       .get(`/api/articles/${article_id}`)
@@ -142,7 +142,7 @@ describe('GET /api/articles/:article_id', () => {
     test('returns an array of comments for the given article_id', () => {
       const article_id = 1;
       return request(app)
-        .get(`/api/comments/${article_id}`)
+        .get(`/api/articles/${article_id}/comments`)
         .then(({ body }) => {
           expect(body.length).toEqual(11);
           body.forEach((comment) => {
@@ -158,7 +158,7 @@ describe('GET /api/articles/:article_id', () => {
     test('return a body of comments with the most recent first using created_at as the criteria', () => {
       const article_id = 1;
       return request(app)
-        .get(`/api/comments/${article_id}`)
+        .get(`/api/articles/${article_id}/comments`)
         .then(({ body }) => {
           expect(body).toBeSortedBy('created_at', {
             descending: true,
@@ -168,7 +168,7 @@ describe('GET /api/articles/:article_id', () => {
 
     test('404 status response with a valid path but non existent article id', () => {
       return request(app)
-        .get('/api/comments/55')
+        .get('/api/articles/55/comments')
         .expect(404)
         .then(({ body }) => {
           expect(body.msg).toEqual('Not found');
@@ -177,7 +177,7 @@ describe('GET /api/articles/:article_id', () => {
 
     test('400 status response with an  invalid article ID', () => {
       return request(app)
-        .get('/api/comments/banaanaz')
+        .get('/api/articles/banaanaz/comments')
         .expect(400)
         .then(({ body }) => {
           expect(body.msg).toEqual('Bad request');
@@ -365,7 +365,7 @@ describe('GET /api/articles/:article_id', () => {
     });
   });
 
-  describe.only('PATCH /api/articles/:article_id', () => {
+  describe('PATCH /api/articles/:article_id', () => {
     test('should return a status :200 and return a body with an updated increased number of votes', () => {
       const newVote = 10;
       const articleVotes = { inc_votes: newVote };
@@ -396,6 +396,7 @@ describe('GET /api/articles/:article_id', () => {
         .send(articleVotes)
         .expect(200)
         .then(({ body }) => {
+          console.log(body)
           expect(body).toEqual({
             article_id: 1,
             title: 'Living in the shadow of a great man',
@@ -526,10 +527,12 @@ describe(' GET /api/articles/:article_id (comment count),', () => {
   });
 });
 
-describe('DELETE /api/comments/:comment_id', () => {
-  test('should return a status :204 and delete the article with the specified comment_id', () => {
+describe('DELETE api/comments/${comment_id}', () => {
+  test.only('should return a status :204 and delete the article with the specified comment_id', () => {
     const comment_id = 7;
-    return request(app).delete(`/api/comments/${comment_id}`).expect(204);
+    return request(app)
+    .delete(`/api/comments/${comment_id}`)
+    .expect(204);
   });
 
   test('DELETE - responds with a 404 status code when the passed ID doesnt exist', () => {
@@ -545,7 +548,7 @@ describe('DELETE /api/comments/:comment_id', () => {
   test('DELETE - responds with a 400 status code when the passed ID is in the wrong format i.e. seven instead of 7', () => {
     const comment_id = 'seven';
     return request(app)
-      .delete(`/api/comments/${comment_id}`)
+      .delete(`api/comments/${comment_id}`)
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toEqual('Bad request');

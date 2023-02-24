@@ -22,13 +22,13 @@ const fetchArticles = (sort_by = 'created_at', order = 'DESC', topic) => {
     'body',
   ];
   const acceptedOrders = ['ASC', 'DESC'];
-  order = order.toUpperCase()
- 
+  order = order.toUpperCase();
+
   if (!acceptedOrders.includes(order)) {
-    return Promise.reject({ status: 400, msg:'Bad request'});
+    return Promise.reject({ status: 400, msg: 'Bad request' });
   }
   if (!acceptedSortBy.includes(sort_by)) {
-    return Promise.reject({ status: 400, msg:'Bad request'});
+    return Promise.reject({ status: 400, msg: 'Bad request' });
   }
 
   let queryStr = `SELECT
@@ -49,42 +49,36 @@ const fetchArticles = (sort_by = 'created_at', order = 'DESC', topic) => {
     queryStr += ` WHERE topic = $1`;
     queryValues.push(topic);
   }
-  queryStr += ` GROUP BY articles.article_id  ORDER BY ${sort_by} ${order};`
+  queryStr += ` GROUP BY articles.article_id  ORDER BY ${sort_by} ${order};`;
 
   return db.query(queryStr, queryValues).then((results) => {
-   if(results.rowCount === 0){
-    return Promise.reject({ status: 404, msg: 'Not found' });
-   }
+    if (results.rowCount === 0) {
+      return Promise.reject({ status: 404, msg: 'Not found' });
+    }
+
     return results.rows;
   });
 };
 
-const fetchArticlesById = (article_id) => { 
-  console.log(article_id);
-  return db.query(`SELECT * FROM articles WHERE article_id = $1;`, [article_id])
-  .then((result) => {
-   
-    if (result.rows.length === 0){
-      console.log(result.rows)
-      return Promise.reject({status: 404, msg: "Not found"});
-    } else{
-      let finalObj = {};
+const fetchArticlesById = (article_id) => {
+  return db
+    .query(`SELECT * FROM articles WHERE article_id = $1;`, [article_id])
+    .then((result) => {
+      if (result.rows.length === 0) {
+        return Promise.reject({ status: 404, msg: 'Not found' });
+      } else {
+        let finalObj = {};
 
-    for(let i = 0; i < result.rows.length; i++ ) {
-      Object.assign(finalObj, result.rows[i]);
-    }
-   console.log(finalObj);
-    return finalObj
-    
-    }
-    })
-}
+        for (let i = 0; i < result.rows.length; i++) {
+          Object.assign(finalObj, result.rows[i]);
+        }
 
+        return finalObj;
+      }
+    });
+};
 
-
-  
-const fetchCommentsByArticleId = (article_id)=> {
-  
+const fetchCommentsByArticleId = (article_id) => {
   return db
     .query(
       'SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC;',
@@ -94,8 +88,7 @@ const fetchCommentsByArticleId = (article_id)=> {
       if (result.rows.length === 0) {
         return Promise.reject({ status: 404, msg: 'Not found' });
       } else {
-      
-      return result.rows;
+        return result.rows;
       }
     });
 };
@@ -118,7 +111,7 @@ const fetchPostedCommentsByArticleId = (article_id, { username, body }) => {
 const fetchVotedArticlesById = (article_id, voteChange) => {
   if (typeof voteChange !== 'number' || voteChange === undefined) {
     return Promise.reject({ status: 400, msg: 'Bad request' });
-  } 
+  }
   return db
     .query(
       `UPDATE articles 
@@ -126,11 +119,12 @@ const fetchVotedArticlesById = (article_id, voteChange) => {
   WHERE article_id = $1 RETURNING * ;`,
       [article_id, voteChange]
     )
-   
-    .then((result) => { 
+
+    .then((result) => {
       if (result.rowCount === 0) {
         return Promise.reject({ status: 404, msg: 'Not found' });
       }
+
       return result.rows[0];
     });
 };
@@ -140,18 +134,16 @@ const fetchUsers = () => {
     return result.rows;
   });
 };
-     
+
 const deleteCommentById = (comment_id) => {
-  if (comment_id > testData.articleData.length) {
+  if (!comment_id) {
     return Promise.reject({ status: 404, msg: 'Not found' });
-  }   
-return db.query(`DELETE FROM comments USING articles
-  WHERE comments.comment_id = $1
-  AND articles.article_id = comments.article_id ; 
-  `,[comment_id])
-  .then((result) =>  {     
-    return result.rows
-  })
+  }
+  return db
+    .query(`DELETE FROM comments WHERE comment_id = $1 `, [comment_id])
+    .then((result) => {
+      return result.rows;
+    });
 };
 
 module.exports = {
@@ -162,5 +154,5 @@ module.exports = {
   fetchPostedCommentsByArticleId,
   fetchVotedArticlesById,
   fetchUsers,
-  deleteCommentById
+  deleteCommentById,
 };
