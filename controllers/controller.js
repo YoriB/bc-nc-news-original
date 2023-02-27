@@ -95,5 +95,6 @@ deleteCommentById(comment_id).then((result) => {
 }
 
 
+
  
 module.exports = { getTopics, getArticles, getArticlesById, getCommentsByArticleId , postCommentsByArticleId, updateArticle, getUsers, deleteComment};
