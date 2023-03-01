@@ -1,94 +1,92 @@
+Getting started
+### Prerequisites:
+- **Node** (download [here](https://nodejs.org/en/))
+- **Git** (download [here](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git))
+- **PostgreSQL** (download [here](https://www.postgresql.org/download/))
+- **API Testing tool** (Supertest, Jest, Insomnia, Postman etc)
+
+### Installation:
+1. Clone this repository
+
+```bash
+git clone https://github.com/YoriB/bc-nc-news-original
+```
+
+2. `cd` into the repository
+```bash
+cd bc-nc-news-original
+`3. Install all dependencies
+```bash
+npm install
+```
+
+4. Create a knexfile.js file in the root directory with the following code:
+```js
+const {Pool} = require(‘path’)
+const ENV = process.env.NODE_ENV || "development";
+
+const config = {
+client: "pg",
+migrations: {
+directory: "./db/migrations",
+},
+seeds: {
+directory: "./db/seeds",
+},
+};
+
+development: {
+connection: {
+database: "nc_news",
+// if you are using a Linux, enter your username and password here
+// username: 'yourUsername'
+// password: 'yourPassword'
+},
+},
+test: {
+connection: {
+database: "nc_news_test",
+// if you are using a Linux, enter your username and password here
+// username: 'yourUsername'
+// password: 'yourPassword'
+},
+},
 
 
-##
-3) To successfully connect the databases locally we need to create two files using the .env.example as a template. Write PGDATABASE = nc-news and nc-news-test respectively for the development and test databases.
+module.exports = { db : new Pool(config)};
+```
 
-Responds with:
+4. Database will require seeding - please follow these steps:
 
-an array of topic objects, each of which should have the following properties:
-slug
-description
-As this is the first endpoint you will need to set up your testing suite.
+```bash
+npm run setup-dbs
+npm run seed
+```
 
-Errors handled.
+## Routes:
 
+```http
+GET /api/topics
+GET /api/articles
+GET /api/articles/:article_id
+GET /api/articles/:article_id/comments
+PATCH /api/articles/:article_id
+POST /api/articles/:article_id/comments
+GET /api/users
+DELETE /api/comments/:comment_id
+GET /api
+```
 
-4) an articles array of article objects, each of which should have the following properties:
+## Test Suite:
 
-author
+**bc-nc-news-original** has a suite of tests that have been used to check the functionality of endpoints of the server, error handling and any utility functions that were used to seed the data. The scripts are already present in this repository. Please follow the command below to run tests:
 
-title
+```bash
+npm test```
 
-article_id
+## Built with:
 
-created_at
-
-votes
-
-article_img_url
-
-comment_count which is the total count of all the comments with this article_id - you should make use of queries to the database in order to achieve this.
-
-the articles should be sorted by date in descending order.
-
-5) Responds with:
-
-an article object, which should have the following properties:
-
-author
-title
-article_id
-body
-topic
-created_at
-votes
-article_img_url
-
--Error handling here 
-
-6) an array of comments for the given article_id of which each comment should have the following properties:
-
-comment_id
-
-votes
-
-created_at
-
-author
-
-body
-
-article_id
-
-comments should be served with the most recent comments first
-
--Error handling here 
-
-7)Request body accepts:
-
-an object with the following properties:
-username
-body
-Responds with:
-
-the posted comment
-
-Error handling here
-
-
-8) Request body accepts:
-
-an object in the form { inc_votes: newVote }
-
-newVote will indicate how much the votes property in the database should be updated by
-e.g.
-
-{ inc_votes : 1 } would increment the current article's vote property by 1
-
-{ inc_votes : -100 } would decrement the current article's vote property by 100
-
-Responds with:
-
-the updated article
-
-Error handling here
+- [Express](https://expressjs.com/) - Node.js web application framework
+- [Knex](http://knexjs.org/) - SQL query builder
+- [PostgreSQL](https://www.postgresql.org/) - open source database
+    • 
